@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="a1"></div>
+  <!-- <script src="https://cdn.bootcdn.net/ajax/libs/single-spa/5.9.3/umd/single-spa.min.js"></script> -->
+  <script type="module">
+    // 微前端 就是可以加不同的应用 single-spa 是基于路由的微前端
+    // 如何接入已写好的应用，对于single-spa来说，我们需要改写子应用（接入协议） bootstrap、mount、unmount
+    import { registerApplication, start } from './single-spa.js'; 
+    console.log(registerApplication);
+    
+    let app1 = {
+      bootstrap: [
+        async () => console.log('app1 bootstrap1'),
+        async () => console.log('app1 bootstrap2'),
+      ],
+      mount: async() => {
+        a1.innerHTML = 'app1';
+      },
+      unmount: async() => {
+        console.log('app1 unmount1')
+      },
+    }
+    let app2 = {
+      bootstrap: async () => console.log('app2 bootstrap1'),
+      mount: async() => {
+        a2.innerHTML = 'app2';
+      },
+      unmount: async() => {
+        console.log('app2 unmount1')
+      },
+    }
+    registerApplication('a', async ()=>app1, location=>location.hash.startsWith('#/app1'));
+    registerApplication('b', async ()=>app2, location=>location.hash.startsWith('#/app2'));
+    start();
+  </script>
+</body>
+</html>
