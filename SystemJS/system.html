@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script type="systemjs-importmap">
+    {
+      "imports": {
+        "lodash": "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js",
+        "axios": "https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"
+      }
+    }
+  </script>
+  <script>
+    const newMapUrl = {}
+    function processScript() {
+      Array.from(document.querySelectorAll('script')).forEach(script=>{
+        if (script.type === 'systemjs-importmap') {
+          const imports = JSON.parse(script.innerHTML).imports; 
+          Object.entries(imports).forEach(([key,value])=>newMapUrl[key]=value);
+        }
+      })
+    }
+    function load(id) {
+      return new Promise((resolve,reject)=>{
+        const script = document.createElement('script');
+        script.src = newMapUrl[id] || id;
+        script.asymc = true;
+        document.head.appendChild(script);
+        script.addEventListener('load',()=>{
+          let _lastRegister = lastRegister;
+          lastRegister = undefined;
+          resolve(_lastRegister);
+        });
+      })
+    }
+
+    let lastRegister;
+    let set = new Set();
+    function saveGlobalProperty() { // 先保存window上所有的属性
+      for (const k in window) {
+        set.add(k);
+      }
+    }
+    saveGlobalProperty();
+    function getLastGlobalProperty() { // 看下window上新增的属性
+      for (const k in window) {
+        if (set.has(k)) continue;
+        set.add(k); 
+        return window[k];
+      }
+    }
+
+    class SystemJS {
+      import(id) { // id原则上可以是第三方路径（cdn）
+        return Promise.resolve(processScript()).then(() => {
+          // 当前路径查找 对应的资源
+          const lastSepIndex = location.href.lastIndexOf('/');
+          const baseUrl = location.href.slice(0, lastSepIndex + 1);
+          if(id.startsWith('./')) { // 本地路径处理
+            return baseUrl + id.slice(2);
+          }
+          // 远程路径没做处理
+        }).then((id) => {
+          let execute;
+          return load(id).then((register)=>{
+            let { setters, execute:exe } = register[1](()=>{});
+            execute = exe;
+            // execute是真正执行渲染的逻辑
+            // setters是用来保存依赖的资源，加载资源调用setters
+            return [register[0], setters]
+          }).then(([registeration, setters])=>{
+            return Promise.all(registeration.map((dep, i)=>{
+              load(dep).then(()=>{
+                // 加载完毕后，会在window上挂载一个模块
+                setters[i](getLastGlobalProperty());
+              });
+              setters[i]; // 拿到的是加载资源的函数 加载资源后，将加载后的模块资源传递给这个setter
+            }))
+          }).then(()=>{
+            execute(); // 执行逻辑
+          });
+        })
+      }
+      register(deps, declare) {
+        lastRegister = [deps, declare];
+      }
+    }
+
+    const System = new SystemJS();
+    System.import('./system.js').then(()=>{
+      console.log('load OK啦');
+    })
+    // 本质是先加载依赖列表 再去加载真正的逻辑
+    // 内部通过script脚本加载资源 给window拍照保存先后状态
+  </script>
+</body>
+</html>
