@@ -1,4 +1,4 @@
-import { MOUNTED, NOT_MOUNTED, UNMOUNTING } from "../application/app.helpers";
+import { MOUNTED, NOT_MOUNTED, UNMOUNTING } from "../application/app.helpers.js";
 
 export const toUnmountPromise = (app) => {
   return Promise.resolve().then(() => {

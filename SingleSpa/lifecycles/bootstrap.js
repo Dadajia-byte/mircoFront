@@ -1,4 +1,4 @@
-import { BOOTSTRAPPING, NOT_BOOTSTRAPPED, NOT_MOUNTED } from "../application/app.helpers"
+import { BOOTSTRAPPING, NOT_BOOTSTRAPPED, NOT_MOUNTED } from "../application/app.helpers.js"
 
 export const toBootstrapPromise = (app) => {
   return Promise.resolve().then(() => {

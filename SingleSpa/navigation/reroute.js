@@ -9,10 +9,11 @@ export const reroute = () => {
   // 加载完毕后 需要去挂载应用
 
   // 先拿到应用加载 -》 
-  if (started) {
+  /* if (started) {
     // 用户调用过start方法 我们需要处理当前应用挂载或者卸载
     return performAppChange()
   }
+ */
 
   return loadApps();
 
