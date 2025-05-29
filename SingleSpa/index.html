@@ -6,7 +6,9 @@
   <title>Document</title>
 </head>
 <body>
-  <div id="a1"></div>
+  <a href="#/app1">a1</a>
+  <a href="#/app2">a2</a>
+  <div id="app"></div>
   <!-- <script src="https://cdn.bootcdn.net/ajax/libs/single-spa/5.9.3/umd/single-spa.min.js"></script> -->
   <script type="module">
     // 微前端 就是可以加不同的应用 single-spa 是基于路由的微前端
@@ -19,7 +21,8 @@
         async () => console.log('app1 bootstrap2'),
       ],
       mount: async() => {
-        a1.innerHTML = 'app1';
+        console.log('app1 mount1');
+        app.innerHTML = 'app1';
       },
       unmount: async() => {
         console.log('app1 unmount1')
@@ -28,7 +31,8 @@
     let app2 = {
       bootstrap: async () => console.log('app2 bootstrap1'),
       mount: async() => {
-        a2.innerHTML = 'app2';
+        console.log('app2 mount1');
+        app.innerHTML = 'app2';
       },
       unmount: async() => {
         console.log('app2 unmount1')

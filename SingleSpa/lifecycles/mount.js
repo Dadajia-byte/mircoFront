@@ -5,8 +5,9 @@ export const toMountPromise = (app) => {
     if (app.status !== NOT_MOUNTED) {
       return app;
     }
-    return app.unmount(app.customProps).then(() => {
+    return app.mount(app.customProps).then(() => {
       app.status = MOUNTED;
+      return app
     });
   }); 
 }
