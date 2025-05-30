@@ -9,6 +9,7 @@ export function registerApplication(appName, loadApp, activeWhen, customProps) {
     activeWhen,
     customProps,
     status: NOT_LOADED, // 应用尚未被加载
+    windowSnapshot: null, // 应用的window快照
   }
   apps.push(registerApplication);
   // 未加载 -》 加载 -》 挂载 -》 启动
