@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "single-spa": ["libs/single-spa/src/index.ts"]
+    }
+  }
+}
