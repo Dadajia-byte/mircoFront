@@ -8,10 +8,10 @@
     "build": {
       "executor": "@nx/rollup:rollup",
       "options": {
-        "outputPath": "/libs/single-spa/dist",
-        "config": "libs/single-spa/rollup.config.cjs",
-        "main": "libs/single-spa/src/index.ts",
-        "tsConfig": "libs/single-spa/tsconfig.lib.json"
+        "outputPath": "/packages/single-spa/dist",
+        "config": "packages/single-spa/rollup.config.cjs",
+        "main": "packages/single-spa/src/index.ts",
+        "tsConfig": "packages/single-spa/tsconfig.lib.json"
       }
     }
   }
