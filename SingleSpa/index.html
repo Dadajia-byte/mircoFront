@@ -6,8 +6,6 @@
   <title>Document</title>
 </head>
 <body>
-  <a href="#/app1">a1</a>
-  <a href="#/app2">a2</a>
   <div id="app"></div>
   <!-- <script src="https://cdn.bootcdn.net/ajax/libs/single-spa/5.9.3/umd/single-spa.min.js"></script> -->
   <script type="module">
@@ -21,8 +19,14 @@
         async () => console.log('app1 bootstrap2'),
       ],
       mount: async() => {
-        console.log('app1 mount1');
-        app.innerHTML = 'app1';
+        return new Promise((resolve)=>{
+          setTimeout(()=>{
+            console.log('app1 mount1');
+            app.innerHTML = 'app1';
+            resolve();
+          }, 1000);
+        })
+        
       },
       unmount: async() => {
         console.log('app1 unmount1')
@@ -41,6 +45,16 @@
     registerApplication('a', async ()=>app1, location=>location.hash.startsWith('#/app1'));
     registerApplication('b', async ()=>app2, location=>location.hash.startsWith('#/app2'));
     start();
+    window.addEventListener('hashchange', () => {
+      console.log('hash changed');
+    });
+  </script>
+  <a onclick="go('#/app1')">a1</a>
+  <a onclick="go('#/app2')">a2</a>
+  <script>
+    function go(path) { // 用户调用pushState replaceState 此方法不会触发逻辑reroute
+      history.pushState({}, null, path);
+    }
   </script>
 </body>
 </html>
