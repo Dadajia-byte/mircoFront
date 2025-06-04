@@ -1,0 +1,9 @@
+{
+  "name": "qiankun",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/qiankun/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project qiankun --web",
+  "targets": {}
+}

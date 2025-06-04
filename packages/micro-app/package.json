@@ -1,0 +1,10 @@
+{
+  "name": "micro-app",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "scripts": {
+    "build": "vite build"
+  }
+}

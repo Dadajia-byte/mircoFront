@@ -1,0 +1,14 @@
+{
+  "name": "micro-app",
+  "sourceRoot": "packages/micro-app/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm build",
+        "cwd": "packages/micro-app"
+      }
+    }
+  }
+}

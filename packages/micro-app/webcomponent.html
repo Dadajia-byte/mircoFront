@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <my-button type="primary"></my-button>
+  <template id="btn">
+    <button class="my-button">按钮</button>
+  </template>
+  <script>
+    class MyButton extends HTMLElement {
+      connectedCallback() { // vue组件中的mounted
+        // 元素挂载完成之后，我们需要获取传入的属性，并且使用对应的模版来渲染
+        this.shadow = this.attachShadow({ mode: 'closed' }); // 创建一个shadow DOM
+        let tpl = document.getElementById('btn').content.cloneNode(true); // 获取模版内容
+        const btnType = this.getAttribute('type') || 'default'; // 获取传入的type属性，默认为'default'
+        let types = {
+          'primary': {
+            background: '#4682f7',
+          },
+          'default': {
+            background: '#f0f0f0',
+          },
+        };
+        let style = document.createElement('style');
+        style.innerHTML = `
+          .my-button {
+            background: ${types[btnType].background};
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+          .my-button:hover {
+            opacity: 0.8;
+          }
+        `;
+        this.shadow.appendChild(style); // 将样式添加到shadow DOM中 (样式隔离)
+        this.shadow.appendChild(tpl); // 将模版内容添加到shadow DOM中 （DOM隔离）
+      }
+      static get observedAttributes() { // 监听属性变化
+        return ['type'];   
+      }
+      attributeChangedCallback(name, oldValue, newValue) { // 属性变化时触发的回调
+        if (this.shadow) {
+          console.log(1234);
+        }
+      }
+      disconnentedCallback() {} // 元素从DOM中移除时触发 可以在这里进行清理工作，比如移除事件监听器等
+      adoptedCallback() {} // 当元素被移动到新的文档时触发
+    }
+    window.customElements.define('my-button', MyButton);
+  </script>
+</body>
+</html>
