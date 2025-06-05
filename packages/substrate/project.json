@@ -1,0 +1,21 @@
+{
+  "name": "substrate",
+  "projectType": "application",
+  "sourceRoot": "packages/substrate/src",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm build",
+        "cwd": "packages/substrate"
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm dev",
+        "cwd": "packages/substrate"
+      }
+    }
+  }
+}

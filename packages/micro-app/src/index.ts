@@ -1,1 +1,3 @@
-export * from './lib/micro-app-element';
+import microApp from "./lib/micro-app";
+
+export { microApp };

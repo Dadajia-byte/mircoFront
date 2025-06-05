@@ -2,6 +2,13 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
+    "composite": true,
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true,  // 跳过声明文件的类型检查
+    "rootDir": "./src",
+    "outDir": "./dist",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "importHelpers": true,
@@ -11,5 +18,5 @@
     "noPropertyAccessFromIndexSignature": true
   },
   "files": [],
-  "include": []
+  "include": ["src/**/*", "src/types/**/*"]
 }

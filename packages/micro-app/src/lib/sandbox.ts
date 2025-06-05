@@ -34,17 +34,30 @@ export class MicroAppSandbox {
 
   async loadApp(url: string) {
     try {
+      // 确保旧的 shadowRoot 被完全清理
+      await this.unmount();
+      
+      // 检查容器是否已经有 shadowRoot
+      if (this.container.shadowRoot) {
+        console.warn('[MicroApp] Container already has a shadow root, removing it...');
+        // @ts-ignore - 强制移除 shadowRoot
+        this.container.shadowRoot = null;
+      }
+
       const html = await this.fetchText(url);
       this.shadowRoot = this.container.attachShadow({ mode: 'open' });
       const processedHtml = this.processHtml(html);
       this.shadowRoot.innerHTML = processedHtml;
+
+      // 添加调试信息
+      console.debug('[MicroApp] Shadow DOM created:', this.shadowRoot);
+
       const scriptTags = this.shadowRoot.querySelectorAll('script');
       for (const script of Array.from(scriptTags)) {
         await this.executeScript(script as HTMLScriptElement);
       }
     } catch (error) {
       console.error(`[MicroApp] Error loading app ${this.appName}:`, error);
-      
     }
   }
 
@@ -88,40 +101,87 @@ export class MicroAppSandbox {
   }
 
   async executeScript(script: HTMLScriptElement) {
-    if (script.src) {
-      const code = await this.fetchText(script.src);
+    try {
+      let code = '';
+      if (script.src) {
+        code = await this.fetchText(script.src);
+      } else {
+        code = script.textContent || '';
+      }
+
+      // 移除可能存在的 import/export 语句
+      code = this.processModuleCode(code);
       return this.runInSandbox(code);
-    } else {
-      return this.runInSandbox(script.textContent || '');
+    } catch (error) {
+      console.error('[MicroApp] Script execution error:', error);
     }
   }
 
-  runInSandbox(code: string) {
-    // 更强隔离建议使用with（proxy）包裹
-    const wrappedCode = `
-      (function(window) {
-        try {
-          with(window){ ${code} }
-        } catch(e) {
-          console.error('[MicroApp] Error executing script in sandbox:', e);
-        }
-      })(this.proxy))`;
-    const script = document.createElement('script');
-    script.text = wrappedCode;
-    this.shadowRoot?.appendChild(script);
-    script.remove();
-    return true;
+  processModuleCode(code: string): string {
+    // 修复正则表达式
+    return code
+      .replace(/import[\s\S]*?['"]\s*;?/g, '') // 更安全的 import 语句匹配
+      .replace(/export[\s\S]*?['"]\s*;?/g, ''); // 更安全的 export 语句匹配
   }
-  unmount() {
+
+ runInSandbox(code: string) {
+    return new Promise((resolve, reject) => {
+      try {
+        const wrappedCode = `
+          (function(window) {
+            try {
+              with(window) {
+                ${code}
+              }
+              return true;
+            } catch(e) {
+              console.error('[MicroApp] Script execution error:', e);
+              return false;
+            }
+          })(this.proxy);
+        `;
+
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.textContent = wrappedCode;
+        
+        // 使用临时容器执行脚本
+        const container = document.createElement('div');
+        container.style.display = 'none';
+        document.body.appendChild(container);
+        
+        script.onload = () => {
+          container.remove();
+          resolve(true);
+        };
+        script.onerror = (err) => {
+          container.remove();
+          reject(err);
+        };
+        
+        container.appendChild(script);
+      } catch (error) {
+        console.error('[MicroApp] Error in runInSandbox:', error);
+        reject(error);
+      }
+    });
+  }
+  async unmount() {
     if (this.shadowRoot) {
-      while (this.shadowRoot.firstChild) {
-        this.shadowRoot.removeChild(this.shadowRoot.firstChild);
-      }
+      // 移除所有子节点
+      this.shadowRoot.innerHTML = '';
+      
+      // 清理全局变量
+      Object.keys(window).forEach(key => {
+        if (key.startsWith(`__MICRO_APP__CASMADE__${this.appName}_`)) {
+          delete (window as any)[key];
+        }
+      });
+
+      // 重置 shadowRoot
+      this.shadowRoot = null;
     }
-    Object.keys(window).forEach(key => {
-      if (key.startsWith(`__MICRO_APP__CASMADE__${this.appName}_`)) {
-        delete (window as any)[key];
-      }
-    })
+    
+    return Promise.resolve();
   }
 }

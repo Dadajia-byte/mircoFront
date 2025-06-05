@@ -5,6 +5,8 @@
       "micro-app": ["packages/micro-app/src/index.ts"],
       "qiankun": ["packages/qiankun/src/index.ts"],
       "single-spa": ["packages/single-spa/src/index.ts"],
+      "substrate/*": ["packages/substrate-demo/src/*"],
+      "react-app": ["packages/react-app/src/*"],
     }
   }
 }

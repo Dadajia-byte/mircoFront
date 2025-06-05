@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "micro-app": ["../micro-app/src"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "references": [
+    { "path": "../micro-app" }
+  ]
+}
