@@ -52,4 +52,6 @@ export class MicroAppELement extends HTMLElement {
   }
 }
 
-window.customElements.define('micro-app-cas', MicroAppELement);
+export function defineElement(tagName: string) {
+  window.customElements.define(tagName, MicroAppELement);
+}
