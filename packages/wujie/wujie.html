@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>基座的代码，不应该被子应用的样式所污染</div>
+  <div id="container"></div>
+  <!-- 
+    以前的js代码都是放到沙箱中自己实现的 -> iframe
+    我们的css隔离 scopedCSS -> webComponent 的 shadowDOM 来实现
+    渲染采用 webcomponent 拉取html模版，生成自定义组件插入到指定dom中
+  -->
+  <script type="module">
+    import { strScript, strTmpWithCss} from './template.js'
+    const container = document.getElementById('container');
+    function createIframe() {
+      const iframe = document.createElement('iframe');
+      iframe.src = 'about:blank';
+      document.body.appendChild(iframe);
+      return iframe;
+    }
+    function createSandbox() {
+      const sandbox = {
+        iframe: createIframe(), // 创建iframe沙箱
+        shadowRoot: null, // 创建shadowDOM
+      }
+      return sandbox;
+    }
+    function injectTemplate(sandbox, template) {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = template;
+      sandbox.shadowRoot.appendChild(wrapper);
+    }
+    function runScriptInSandbox(sandbox, script) {
+      const iframeWindow = sandbox.iframe.contentWindow;
+      const scriptElement = iframeWindow.document.createElement('script');
+
+      // 获取head 插入script
+      const head = iframeWindow.document.querySelector('head');
+      // 我们希望在脚本执行之前，有些方法用的是父应用的
+      // document.querySelector 应该用的不是iframe中的，而是shadowRoot
+      // 添加弹框的时候，document.createElement().appendChild() -> 代理到全局的window上
+      // iframe 中的路由管理 history.pushState -> 将一些常用方法进行同步到主应用上
+      // ...
+      Object.defineProperty(iframeWindow.Document.prototype, 'querySelector', {
+        get() {
+          // 加载的脚本内部调用了querySelector
+          // document.querySelector -> sandbox.shadowRoot.querySelector
+          return new Proxy(sandbox.shadowRoot['querySelector'], {
+            apply(target, thisArg, args) {
+              thisArg.querySelector.apply(sandbox.shadowRoot, args);
+            }
+          })
+        },
+
+      })
+      scriptElement.textContent = script;
+      head.appendChild(scriptElement);
+    }
+    const createCustomElement = () => {
+      class WujieApp extends HTMLElement {
+        connectedCallback() {
+          // 1. 创建沙箱
+          const sandbox = createSandbox();
+          // 2. 创建shadowDOM
+          sandbox.shadowRoot = this.attachShadow({ mode: 'open' });
+          // 3. 将html、css放入到shadowDOM中
+          injectTemplate(sandbox, strTmpWithCss);
+          // 4. 将js放入沙箱还行
+          runScriptInSandbox(sandbox, strScript);
+        }
+      }
+      window.customElements.define('wujie-app', WujieApp);
+      container.appendChild(document.createElement('wujie-app'));
+    }
+    createCustomElement();
+  </script>
+</body>
+</html>
