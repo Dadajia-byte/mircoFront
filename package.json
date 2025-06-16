@@ -5,7 +5,8 @@
   "scripts": {
     "build:all": "nx run-many --target=build --all",
     "build:micro": "nx build micro-app",
-    "build:single": "nx build single-spa"
+    "build:single": "nx build single-spa",
+    "build:wujie": "nx build wujie"
   },
   "repository": {
     "type": "git",
@@ -23,9 +24,10 @@
   "homepage": "https://github.com/Dadajia-byte/mircoFront#readme",
   "description": "",
   "devDependencies": {
-    "@nx/js": "^21.1.2",
+    "@nx/js": "21.2.0",
     "@nx/rollup": "21.1.2",
-    "@nx/web": "^21.1.2",
+    "@nx/vite": "21.2.0",
+    "@nx/web": "21.2.0",
     "@swc-node/register": "~1.9.1",
     "@swc/cli": "~0.6.0",
     "@swc/core": "~1.5.7",
@@ -41,5 +43,6 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {}
 }

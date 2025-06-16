@@ -4,9 +4,10 @@
     "paths": {
       "micro-app": ["packages/micro-app/src/index.ts"],
       "qiankun": ["packages/qiankun/src/index.ts"],
+      "react-app": ["packages/react-app/src/*"],
       "single-spa": ["packages/single-spa/src/index.ts"],
       "substrate/*": ["packages/substrate-demo/src/*"],
-      "react-app": ["packages/react-app/src/*"],
+      "wujie": ["packages/wujie/src/index.ts"]
     }
   }
 }
