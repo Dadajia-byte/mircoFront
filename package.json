@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/Dadajia-byte/mircoFront.git"
   },
+  "engines": {
+    "node": ">=20.15.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

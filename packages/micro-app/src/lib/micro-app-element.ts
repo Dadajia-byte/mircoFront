@@ -1,5 +1,5 @@
 import { MicroAppSandbox } from './sandbox';
-export class MicroAppELement extends HTMLElement {
+export class MicroAppElement extends HTMLElement {
   static get observedAttributes() {
     return ['name', 'url'];
   }
@@ -53,5 +53,5 @@ export class MicroAppELement extends HTMLElement {
 }
 
 export function defineElement(tagName: string) {
-  window.customElements.define(tagName, MicroAppELement);
+  window.customElements.define(tagName, MicroAppElement);
 }

@@ -4,7 +4,6 @@ import { onMounted } from 'vue';
 onMounted(() => {
   // 初始化 micro-app
   console.log('microApp', microApp);
-  
   microApp.start();
 })
 
