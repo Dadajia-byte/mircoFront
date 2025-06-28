@@ -9,8 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "micro-app": "workspace:*",
     "vue": "^3.5.13",
-    "micro-app" : "workspace:*"
+    "wujie": "^1.0.28"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

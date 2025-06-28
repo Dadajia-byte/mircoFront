@@ -1,0 +1,31 @@
+{
+  "name": "zmp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "zmp": "./bin/zmp.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.27.7",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "axios": "^1.10.0",
+    "babel-loader": "^10.0.0",
+    "commander": "^14.0.0",
+    "fs-extra": "^11.3.0",
+    "git-promise": "^1.0.0",
+    "html-webpack-plugin": "^5.6.3",
+    "inquirer": "^12.6.3",
+    "nanospinner": "^1.2.2",
+    "webpack": "^5.99.9",
+    "webpack-chain": "^6.5.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}
